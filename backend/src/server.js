@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.js'; 
+import messageRoutes from './routes/message.route.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 //routes
 app.use('/auth', authRoutes);
+app.use('/messages', messageRoutes);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
