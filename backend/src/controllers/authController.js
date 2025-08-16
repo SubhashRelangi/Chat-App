@@ -36,19 +36,21 @@ export const signup = async (req, res) => {
       profilePic: profilePic || ""
     });
 
-    await newUser.save();
+    if (newUser) {
+      await newUser.save();
 
-    // Generate and set JWT token
-    generateToken(newUser._id, res);
+      // Generate and set JWT token
+      generateToken(newUser._id, res);
 
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        username: newUser.username,
-        email: newUser.email,
-        profilePic: newUser.profilePic
-      }
-    });
+      res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          username: newUser.username,
+          email: newUser.email,
+          profilePic: newUser.profilePic
+        }
+      });
+    }
   } catch (err) {
     console.error("Signup error:", err);
     res.status(500).json({ message: "Internal server error" });
@@ -92,6 +94,16 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("jwt");
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Logout error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
