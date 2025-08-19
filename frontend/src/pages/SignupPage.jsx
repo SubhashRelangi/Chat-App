@@ -42,7 +42,7 @@ const SignupPage = () => {
           confirmPassword: '',
         });
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/';
         }, 2000);
       } else {
         toast.error(data.message || 'Signup failed');
