@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ const SignupPage = () => {
     password: '',
     confirmPassword: '',
   });
+
+  const { signup, isSigningUp } = useAuthStore();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,37 +24,11 @@ const SignupPage = () => {
       return;
     }
 
-    const toastId = toast.loading('Signing you up...');
-
-    try {
-      const res = await fetch('http://localhost:5005/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      toast.dismiss(toastId);
-
-      if (res.ok) {
-        toast.success('Signup successful!');
-        setFormData({
-          username: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        });
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
-      } else {
-        toast.error(data.message || 'Signup failed');
-      }
-    } catch (err) {
-      toast.dismiss(toastId);
-      toast.error('Server error. Please try again.');
-      console.error(err);
-    }
+    await signup({
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   return (
@@ -66,8 +43,8 @@ const SignupPage = () => {
                   field === 'password' || field === 'confirmPassword'
                     ? 'password'
                     : field === 'email'
-                    ? 'email'
-                    : 'text'
+                      ? 'email'
+                      : 'text'
                 }
                 name={field}
                 value={formData[field]}
@@ -90,9 +67,14 @@ const SignupPage = () => {
           ))}
           <button
             type="submit"
-            className="w-full bg-indigo-500 hover:bg-indigo-600 py-2 rounded-lg font-semibold shadow-md transition duration-300"
+            disabled={isSigningUp}
+            className={`w-full py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 ease-in-out ${
+              isSigningUp
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:shadow-xl hover:scale-[1.02]'
+            }`}
           >
-            Sign Up
+            {isSigningUp ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-white/80">
