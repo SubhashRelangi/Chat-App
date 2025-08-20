@@ -1,12 +1,20 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, User } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { MessageCircle, User, LogOut, Settings } from 'lucide-react';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
 
   const hideNavbarPaths = ['/login', '/signup'];
   if (hideNavbarPaths.includes(location.pathname)) return null;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <nav className="w-full px-8 py-5 bg-white/10 backdrop-blur-md shadow-md flex items-center justify-between border-b border-white/20">
@@ -16,13 +24,35 @@ const Navbar = () => {
         <span className="font-semibold text-xl">ChatApp</span>
       </Link>
 
-      {/* Right: Profile Icon with Border */}
-      <Link
-        to="/profile"
-        className="border border-white/30 rounded-full p-2 hover:border-blue-400 transition"
-      >
-        <User className="size-6 text-white" />
-      </Link>
+      {/* Right: Icons */}
+      <div className="flex items-center gap-4">
+        {/* Settings */}
+        <Link
+          to="/settings"
+          className="flex items-center gap-2 border border-white/30 rounded-full px-3 py-2 hover:border-blue-400 transition"
+        >
+          <Settings className="size-5 text-white" />
+          <span className="hidden md:inline text-white text-sm">Settings</span>
+        </Link>
+
+        {/* Profile */}
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 border border-white/30 rounded-full px-3 py-2 hover:border-blue-400 transition"
+        >
+          <User className="size-5 text-white" />
+          <span className="hidden md:inline text-white text-sm">Profile</span>
+        </Link>
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 border border-white/30 rounded-full px-3 py-2 hover:border-red-400 transition"
+        >
+          <LogOut className="size-5 text-white" />
+          <span className="hidden md:inline text-white text-sm">Logout</span>
+        </button>
+      </div>
     </nav>
   );
 };
