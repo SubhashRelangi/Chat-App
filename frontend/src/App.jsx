@@ -30,6 +30,7 @@ const App = () => {
       </div>
     );
   }
+  console.log("Auth user:", authUser);
 
   return (
     <div>

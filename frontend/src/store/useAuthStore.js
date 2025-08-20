@@ -51,35 +51,33 @@ export const useAuthStore = create((set) => ({
 
   login: async (credentials) => {
     set({ isLoading: true });
-    const toastId = toast.loading('Logging you in...');
+    const toastId = toast.loading("Logging you in...");
 
     try {
-      const res = await axiosInstance.post('/auth/login', credentials);
+      const res = await axiosInstance.post("/auth/login", credentials);
+      const user = res.data?.user;
 
-      if (res.status === 200 && res.data?.user) {
-        setTimeout(() => {
-          set({ authUser: res.data.user });
-          toast.success('Login completed!', { id: toastId });
-        }, 2000);
+      if (user) {
+        set({ authUser: user });
+        toast.success("Login completed!", { id: toastId });
       } else {
-        toast.error('Login failed. Please try again.', { id: toastId });
+        toast.error("Login failed. Please try again.", { id: toastId });
       }
     } catch (error) {
       const message = error.response?.data?.message;
 
-      if (message === 'User not found') {
-        toast.error('No account found with this email. Please sign up.', { id: toastId });
-      } else if (message === 'Invalid credentials') {
-        toast.error('Incorrect email or password.', { id: toastId });
-      } else {
-        toast.error('Something went wrong. Please try again later.', { id: toastId });
-      }
+      const errorMessages = {
+        "User not found": "No account found with this email. Please sign up.",
+        "Invalid credentials": "Incorrect email or password.",
+      };
 
-      console.error('Login error:', error);
+      toast.error(errorMessages[message] || "Something went wrong. Please try again later.", {
+        id: toastId,
+      });
+
+      console.error("Login error:", error);
     } finally {
-      setTimeout(() => {
-        set({ isLoading: false });
-      }, 2000);
+      set({ isLoading: false });
     }
   },
 
@@ -111,9 +109,8 @@ export const useAuthStore = create((set) => ({
     set({ isUpdatingProfile: true });
 
     try {
-      const res = await axiosInstance.patch("/auth/update-profile", data);
+      const res = await axiosInstance.put("/auth/update-profile", data);
       set({ authUser: res.data });
-      toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error in updateProfile:", error);
 

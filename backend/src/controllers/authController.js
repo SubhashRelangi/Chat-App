@@ -1,61 +1,49 @@
-import bcrypt from 'bcrypt';
-import User from '../models/auth.model.js';
-import { generateToken } from '../lib/utils.js';
-import cloudinary from '../lib/cloudinary.js';
-import jwt from 'jsonwebtoken';
+import { generateToken } from "../lib/utils.js";
+import User from "../models/auth.model.js";
+import bcrypt from "bcrypt";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
-  const { username, email, password, profilePic } = req.body;
-
+  const { fullName, email, password } = req.body;
   try {
-    // Validate required fields
-    if (!username || !email || !password) {
+    if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Validate password length
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
-    // Normalize email (basic trim and lowercase)
-    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email });
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
-      return res.status(409).json({ message: "Email already registered" });
-    }
+    if (user) return res.status(400).json({ message: "Email already exists" });
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
     const newUser = new User({
-      username: username.trim(),
-      email: normalizedEmail,
+      fullName,
+      email,
       password: hashedPassword,
-      profilePic: profilePic || ""
     });
 
     if (newUser) {
+      // generate jwt token here
+      generateToken(newUser._id, res);
       await newUser.save();
 
-      // Generate and set JWT token
-      generateToken(newUser._id, res);
-
       res.status(201).json({
-        message: "User registered successfully",
-        user: {
-          username: newUser.username,
-          email: newUser.email,
-          profilePic: newUser.profilePic
-        }
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        profilePic: newUser.profilePic,
       });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
     }
-  } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    console.log("Error in signup controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -86,41 +74,43 @@ export const login = async (req, res) => {
     // Generate and set JWT token
     generateToken(user._id, res);
 
+    // Return consistent user object
     res.status(200).json({
       message: "Login successful",
       user: {
-        username: user.username,
+        _id: user._id,
+        username: user.username || user.fullName, // fallback if username is missing
         email: user.email,
-        profilePic: user.profilePic
-      }
+        profilePic: user.profilePic,
+        createdAt: user.createdAt,
+      },
     });
   } catch (err) {
-    console.error("Login error:", err);
+    console.error("Login error:", err.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const logout = (req, res) => {
   try {
-    res.clearCookie("jwt");
-    res.status(200).json({ message: "Logout successful" });
+    res.cookie("jwt", "", { maxAge: 0 });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error("Logout error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.log("Error in logout controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
-    const userId = req.user._id; // ✅ Corrected from res.user to req.user
+    const userId = req.user._id;
 
     if (!profilePic) {
-      return res.status(400).json({ message: "Profile picture is required" });
+      return res.status(400).json({ message: "Profile pic is required" });
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
-
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePic: uploadResponse.secure_url },
@@ -129,29 +119,16 @@ export const updateProfile = async (req, res) => {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Update profile error:", error);
+    console.log("error in update profile:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const checkAuth = async (req, res) => {
-  const token = req.cookies.jwt;
-
-  if (!token) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+export const checkAuth = (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.status(200).json({ user });
-  } catch (err) {
-    console.error('Auth check error:', err);
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in checkAuth controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

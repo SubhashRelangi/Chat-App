@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+  const [selectedImg, setSelectedImg] = useState(null);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -20,6 +21,7 @@ const ProfilePage = () => {
 
     reader.onload = async () => {
       const base64Image = reader.result;
+      setSelectedImg(base64Image); // Optimistic UI update
       await updateProfile({ profilePic: base64Image });
 
       try {
@@ -49,7 +51,7 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
-                src={authUser.profilePic || "/profile.jpg"}
+                src={selectedImg || authUser.profilePic || "/profile.png"}
                 alt="Profile"
                 className="size-32 rounded-full object-cover border-4 border-base-content"
               />

@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5005;
 const MONGO_URI = process.env.MONGODB_URL;
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
