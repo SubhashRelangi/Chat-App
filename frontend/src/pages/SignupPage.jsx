@@ -19,7 +19,25 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
+    const { username, email, password, confirmPassword } = formData;
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+    if (!gmailRegex.test(email)) {
+      toast.error('Email must be a valid Gmail address');
+      return;
+    }
+
+    if (email.length <= 6) {
+      toast.error('Email must be longer than 6 characters');
+      return;
+    }
+
+    if (password.length <= 6) {
+      toast.error('Password must be longer than 6 characters');
+      return;
+    }
+
+    if (password !== confirmPassword) {
       toast.error("Passwords don't match");
       return;
     }
@@ -68,11 +86,10 @@ const SignupPage = () => {
           <button
             type="submit"
             disabled={isSigningUp}
-            className={`w-full py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 ease-in-out ${
-              isSigningUp
+            className={`w-full py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 ease-in-out ${isSigningUp
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:shadow-xl hover:scale-[1.02]'
-            }`}
+              }`}
           >
             {isSigningUp ? 'Signing Up...' : 'Sign Up'}
           </button>

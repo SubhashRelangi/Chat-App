@@ -50,28 +50,38 @@ export const useAuthStore = create((set) => ({
   },
 
   login: async (credentials) => {
-    set({ isLoading: true });
-    const toastId = toast.loading('Logging you in...');
+  set({ isLoading: true });
+  const toastId = toast.loading('Logging you in...');
 
-    try {
-      const res = await axiosInstance.post('/auth/login', credentials);
-      if (res.status === 200) {
-        setTimeout(() => {
-          set({ authUser: res.data.user });
-          toast.success('Login completed!', { id: toastId });
-        }, 2000);
-      } else {
-        toast.error('Login failed', { id: toastId });
-      }
-    } catch (error) {
-      toast.error('Server error', { id: toastId });
-      console.error('Login error:', error);
-    } finally {
+  try {
+    const res = await axiosInstance.post('/auth/login', credentials);
+
+    if (res.status === 200 && res.data?.user) {
       setTimeout(() => {
-        set({ isLoading: false });
+        set({ authUser: res.data.user });
+        toast.success('Login completed!', { id: toastId });
       }, 2000);
+    } else {
+      toast.error('Login failed. Please try again.', { id: toastId });
     }
-  },
+  } catch (error) {
+    const message = error.response?.data?.message;
+
+    if (message === 'User not found') {
+      toast.error('No account found with this email. Please sign up.', { id: toastId });
+    } else if (message === 'Invalid credentials') {
+      toast.error('Incorrect email or password.', { id: toastId });
+    } else {
+      toast.error('Something went wrong. Please try again later.', { id: toastId });
+    }
+
+    console.error('Login error:', error);
+  } finally {
+    setTimeout(() => {
+      set({ isLoading: false });
+    }, 2000);
+  }
+},
 
   logout: async () => {
     const toastId = toast.loading('Logging you out...');
