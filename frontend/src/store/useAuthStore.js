@@ -50,38 +50,38 @@ export const useAuthStore = create((set) => ({
   },
 
   login: async (credentials) => {
-  set({ isLoading: true });
-  const toastId = toast.loading('Logging you in...');
+    set({ isLoading: true });
+    const toastId = toast.loading('Logging you in...');
 
-  try {
-    const res = await axiosInstance.post('/auth/login', credentials);
+    try {
+      const res = await axiosInstance.post('/auth/login', credentials);
 
-    if (res.status === 200 && res.data?.user) {
+      if (res.status === 200 && res.data?.user) {
+        setTimeout(() => {
+          set({ authUser: res.data.user });
+          toast.success('Login completed!', { id: toastId });
+        }, 2000);
+      } else {
+        toast.error('Login failed. Please try again.', { id: toastId });
+      }
+    } catch (error) {
+      const message = error.response?.data?.message;
+
+      if (message === 'User not found') {
+        toast.error('No account found with this email. Please sign up.', { id: toastId });
+      } else if (message === 'Invalid credentials') {
+        toast.error('Incorrect email or password.', { id: toastId });
+      } else {
+        toast.error('Something went wrong. Please try again later.', { id: toastId });
+      }
+
+      console.error('Login error:', error);
+    } finally {
       setTimeout(() => {
-        set({ authUser: res.data.user });
-        toast.success('Login completed!', { id: toastId });
+        set({ isLoading: false });
       }, 2000);
-    } else {
-      toast.error('Login failed. Please try again.', { id: toastId });
     }
-  } catch (error) {
-    const message = error.response?.data?.message;
-
-    if (message === 'User not found') {
-      toast.error('No account found with this email. Please sign up.', { id: toastId });
-    } else if (message === 'Invalid credentials') {
-      toast.error('Incorrect email or password.', { id: toastId });
-    } else {
-      toast.error('Something went wrong. Please try again later.', { id: toastId });
-    }
-
-    console.error('Login error:', error);
-  } finally {
-    setTimeout(() => {
-      set({ isLoading: false });
-    }, 2000);
-  }
-},
+  },
 
   logout: async () => {
     const toastId = toast.loading('Logging you out...');
@@ -106,4 +106,27 @@ export const useAuthStore = create((set) => ({
       isLoading: false,
       isUpdatingProfile: false,
     }),
+
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+
+    try {
+      const res = await axiosInstance.patch("/auth/update-profile", data);
+      set({ authUser: res.data });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error in updateProfile:", error);
+
+      // Handle network errors and unexpected cases
+      if (error.code === "ERR_NETWORK") {
+        toast.error("Network error. Please check your connection.");
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Unexpected error occurred.");
+      }
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
+  }
 }));

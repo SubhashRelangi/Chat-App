@@ -10,7 +10,7 @@ import messageRoutes from './routes/message.route.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5005;
 const MONGO_URI = process.env.MONGODB_URL;
 
 // Middleware
