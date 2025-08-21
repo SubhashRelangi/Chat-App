@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full px-8 py-5 bg-white/10 backdrop-blur-md shadow-md flex items-center justify-between border-b border-white/20">
+    <nav className="w-full px-4 sm:px-8 py-5 bg-white/10 backdrop-blur-md shadow-md flex items-center justify-between border-b border-white/20">
       {/* Left: Chat Logo */}
       <Link to="/" className="flex items-center gap-2 text-white hover:text-blue-300 transition">
         <MessageCircle className="size-7" />
@@ -25,7 +25,7 @@ const Navbar = () => {
       </Link>
 
       {/* Right: Icons */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Settings */}
         <Link
           to="/settings"
