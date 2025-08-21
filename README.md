@@ -10,7 +10,7 @@ A real-time chat application that allows users to communicate instantly in one-o
 - **User Discovery:** A sidebar lists all registered users, making it easy to start a conversation.
 - **Private Conversations:** All conversations are private between two users.
 - **Responsive UI:** The application is designed to be responsive and work on various screen sizes.
-
+comm
 ## Tech Stack
 
 ### Frontend
