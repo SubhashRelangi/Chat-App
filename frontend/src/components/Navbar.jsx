@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MessageCircle, User, LogOut, Settings } from 'lucide-react';
+import { MessageCircle, User, LogOut, Palette } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore.js';
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuthStore();
+  const [theme, setTheme] = useState('cupcake');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const hideNavbarPaths = ['/login', '/signup'];
   if (hideNavbarPaths.includes(location.pathname)) return null;
@@ -26,14 +31,18 @@ const Navbar = () => {
 
       {/* Right: Icons */}
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Settings */}
-        <Link
-          to="/settings"
-          className="flex items-center gap-2 border border-base-300 rounded-full px-3 py-2 hover:border-primary transition"
-        >
-          <Settings className="size-5" />
-          <span className="hidden md:inline text-sm">Settings</span>
-        </Link>
+        {/* Themes Dropdown */}
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button" className="flex items-center gap-2 border border-base-300 rounded-full px-3 py-2 hover:border-primary transition">
+            <Palette className="size-5" />
+            <span className="hidden md:inline text-sm">Themes</span>
+          </div>
+          <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+            <li><a onClick={() => setTheme('light')}>Light</a></li>
+            <li><a onClick={() => setTheme('dark')}>Dark</a></li>
+            <li><a onClick={() => setTheme('cupcake')}>Cupcake</a></li>
+          </ul>
+        </div>
 
         {/* Profile */}
         <Link
