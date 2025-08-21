@@ -103,23 +103,39 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePic } = req.body;
+    const { profilePic, username } = req.body;
     const userId = req.user._id;
 
-    if (!profilePic) {
-      return res.status(400).json({ message: "Profile pic is required" });
+    const updates = {};
+
+    // Handle profile picture upload
+    if (profilePic) {
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+      updates.profilePic = uploadResponse.secure_url;
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true }
-    );
+    // Handle username update
+    if (username) {
+      if (username.length < 3) {
+        return res.status(400).json({ message: "Username must be at least 3 characters" });
+      }
 
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== userId.toString()) {
+        return res.status(409).json({ message: "Username already taken" });
+      }
+
+      updates.username = username;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log("error in update profile:", error);
+    console.error("Error in update profile:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

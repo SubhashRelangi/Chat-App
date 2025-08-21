@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast";
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+  const [newUsername, setNewUsername] = useState(authUser?.username || "");
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -22,7 +24,6 @@ const ProfilePage = () => {
     reader.onload = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image); // Optimistic UI update
-      await updateProfile({ profilePic: base64Image });
 
       try {
         await updateProfile({ profilePic: base64Image });
@@ -38,16 +39,35 @@ const ProfilePage = () => {
     };
   };
 
+  const handleUsernameUpdate = async () => {
+    if (!newUsername.trim()) return toast.error("Username can't be empty");
+    if (newUsername === authUser.username) {
+      setIsEditingUsername(false);
+      return;
+    }
+
+    try {
+      await updateProfile({ username: newUsername });
+      toast.success("Username updated!");
+      setIsEditingUsername(false);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update username"
+      );
+    }
+  };
+
   return (
     <div className="h-screen pt-20 bg-base-200">
       <div className="max-w-2xl mx-auto p-4 py-8">
-        <div className="bg-base-100 rounded-xl p-6 space-y-8">
+        <div className="bg-base-100 rounded-xl p-6 space-y-8 shadow-lg">
+          {/* Header */}
           <div className="text-center">
             <h1 className="text-2xl font-semibold">Profile</h1>
             <p className="mt-2 text-base-content/60">Your profile information</p>
           </div>
 
-          {/* Avatar Upload Section */}
+          {/* Avatar Upload */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
@@ -79,27 +99,59 @@ const ProfilePage = () => {
             </p>
           </div>
 
-          {/* Profile Info */}
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <div className="text-sm text-base-content/60 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Full Name
-              </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-300">
-                {authUser?.username}
-              </p>
+          {/* Username Section */}
+          <div className="space-y-1.5">
+            <div className="text-sm text-base-content/60 flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Full Name
             </div>
 
-            <div className="space-y-1.5">
-              <div className="text-sm text-base-content/60 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address
+            {isEditingUsername ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  disabled={isUpdatingProfile}
+                />
+                <button
+                  className="btn btn-success"
+                  onClick={handleUsernameUpdate}
+                  disabled={isUpdatingProfile}
+                >
+                  Confirm
+                </button>
+                <button
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setNewUsername(authUser.username);
+                    setIsEditingUsername(false);
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-300">
-                {authUser?.email}
-              </p>
+            ) : (
+              <div
+                className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-300 flex justify-between items-center cursor-pointer hover:bg-base-300 transition"
+                onClick={() => setIsEditingUsername(true)}
+              >
+                <span>{authUser?.username}</span>
+                <span className="text-primary text-sm">Edit</span>
+              </div>
+            )}
+          </div>
+
+          {/* Email Section */}
+          <div className="space-y-1.5">
+            <div className="text-sm text-base-content/60 flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              Email Address
             </div>
+            <p className="px-4 py-2.5 bg-base-200 rounded-lg border border-base-300">
+              {authUser?.email}
+            </p>
           </div>
 
           {/* Account Info */}
