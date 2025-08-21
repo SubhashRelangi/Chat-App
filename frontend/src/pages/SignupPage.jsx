@@ -50,9 +50,9 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#6b8dd6] flex items-center justify-center px-4">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-10 w-full max-w-md text-white transition-all duration-300 hover:scale-[1.01]">
-        <h2 className="text-4xl font-extrabold text-center mb-8 tracking-wide drop-shadow-lg">Create Account</h2>
+    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
+      <div className="bg-base-100 shadow-xl rounded-2xl p-10 w-full max-w-md">
+        <h2 className="text-4xl font-extrabold text-center mb-8 tracking-wide">Create Account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {['username', 'email', 'password', 'confirmPassword'].map((field) => (
             <div key={field} className="relative">
@@ -68,7 +68,7 @@ const SignupPage = () => {
                 value={formData[field]}
                 onChange={handleChange}
                 required
-                className="peer w-full px-4 pt-6 pb-2 bg-white/20 text-white placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+                className="peer w-full px-4 pt-6 pb-2 bg-base-200 placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder={
                   field === 'confirmPassword'
                     ? 'Confirm Password'
@@ -77,7 +77,7 @@ const SignupPage = () => {
               />
               <label
                 htmlFor={field}
-                className="absolute left-4 top-2 text-sm text-white/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white/70"
+                className="absolute left-4 top-2 text-sm text-base-content/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-base-content/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-base-content/70"
               >
                 {field === 'confirmPassword' ? 'Confirm Password' : field.charAt(0).toUpperCase() + field.slice(1)}
               </label>
@@ -86,17 +86,14 @@ const SignupPage = () => {
           <button
             type="submit"
             disabled={isSigningUp}
-            className={`w-full py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 ease-in-out ${isSigningUp
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:shadow-xl hover:scale-[1.02]'
-              }`}
+            className="btn btn-primary w-full"
           >
             {isSigningUp ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-white/80">
+        <p className="mt-6 text-center text-sm">
           Already have an account?{' '}
-          <a href="/login" className="text-white underline hover:text-indigo-200 transition">
+          <a href="/login" className="text-primary underline hover:text-primary-focus transition">
             Login
           </a>
         </p>

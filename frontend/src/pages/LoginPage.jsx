@@ -12,9 +12,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#6b8dd6] flex items-center justify-center px-4">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-10 w-full max-w-md text-white transition-all duration-300 hover:scale-[1.01]">
-        <h2 className="text-4xl font-extrabold text-center mb-8 tracking-wide drop-shadow-lg">
+    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
+      <div className="bg-base-100 shadow-xl rounded-2xl p-10 w-full max-w-md">
+        <h2 className="text-4xl font-extrabold text-center mb-8 tracking-wide">
           Login
         </h2>
         <form onSubmit={handleLogin} className="space-y-6">
@@ -25,12 +25,12 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="peer w-full px-4 pt-6 pb-2 bg-white/20 text-white placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+              className="peer w-full px-4 pt-6 pb-2 bg-base-200 placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               placeholder="Email"
             />
             <label
               htmlFor="email"
-              className="absolute left-4 top-2 text-sm text-white/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white/70"
+              className="absolute left-4 top-2 text-sm text-base-content/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-base-content/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-base-content/70"
             >
               Email
             </label>
@@ -43,12 +43,12 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="peer w-full px-4 pt-6 pb-2 bg-white/20 text-white placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+              className="peer w-full px-4 pt-6 pb-2 bg-base-200 placeholder-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               placeholder="Password"
             />
             <label
               htmlFor="password"
-              className="absolute left-4 top-2 text-sm text-white/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white/70"
+              className="absolute left-4 top-2 text-sm text-base-content/70 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-base-content/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-base-content/70"
             >
               Password
             </label>
@@ -57,21 +57,17 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 ease-in-out ${
-              isLoading
-                ? 'bg-indigo-300 cursor-not-allowed'
-                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:shadow-xl hover:scale-[1.02]'
-            }`}
+            className="btn btn-primary w-full"
           >
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-white/80">
+        <p className="mt-6 text-center text-sm">
           Don't have an account?{' '}
           <a
             href="/signup"
-            className="text-white underline hover:text-indigo-200 transition"
+            className="text-primary underline hover:text-primary-focus transition"
           >
             Sign Up
           </a>

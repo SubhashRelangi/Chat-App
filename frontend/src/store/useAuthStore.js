@@ -13,7 +13,7 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.get('/auth/check');
       if (res.status === 200) {
-        set({ authUser: res.data.user });
+        set({ authUser: res.data });
       } else {
         set({ authUser: null });
       }

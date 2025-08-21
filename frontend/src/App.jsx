@@ -33,7 +33,7 @@ const App = () => {
   console.log("Auth user:", authUser);
 
   return (
-    <div>
+    <div data-theme='cupcake'>
       <Toaster
         position="top-right"
         toastOptions={{
