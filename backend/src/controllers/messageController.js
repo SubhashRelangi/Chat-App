@@ -19,8 +19,8 @@ export const getMessages = async (req, res) => {
                 { senderId: userToChatId, receiverId: myId }
             ]
         })
-        .sort({ createdAt: 1 })
-        .lean();
+            .sort({ createdAt: 1 })
+            .lean();
 
         res.status(200).json(messages);
     } catch (error) {
@@ -34,14 +34,12 @@ export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedUserId = req.user._id;
 
-        const filteredUsers = await User.find({ _id: { $ne: loggedUserId } })
-            .select("-password")
-            .lean();
+        const users = await User.find({ _id: { $ne: loggedUserId } }).select("-password");
 
-        res.status(200).json(filteredUsers);
+        res.status(200).json(users);
     } catch (error) {
-        console.error("Error fetching users for sidebar:", error);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Error in getAllUsers controller:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
