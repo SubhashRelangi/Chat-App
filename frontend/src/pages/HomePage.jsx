@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import NoSelectedUser from '../components/NoChatSeleted';
+import Sidebar from '../components/Sidebar';
+import ChatContainer from '../components/ChatContainer';
+import { useChatStore } from '../store/useChatStore';
 
 const HomePage = () => {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:5005/messages/users', {
-          withCredentials: true, // 👈 This sends cookies with the request
-        });
-        setUsers(response.data);
-        console.log('Fetched users:', response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error.response?.data || error.message);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  const {selectedUser} = useChatStore();
 
   return (
-    <div>
-      <h2>HomePage</h2>
+    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+
+      <Sidebar />
+
+      <div className="flex-1 overflow-hidden">
+        {selectedUser ? (
+          <div className="h-full flex items-center justify-center">
+            <ChatContainer />
+          </div>
+        ) : (
+          <NoSelectedUser />
+        )}
+      </div>
     </div>
   );
 };
