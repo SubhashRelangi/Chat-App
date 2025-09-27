@@ -9,13 +9,14 @@ import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import SignupPage from './pages/SignupPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
-import ProfilePage from './pages/ProfilePage.jsx';
+import { ProfilePage } from './pages/ProfilePage.jsx';
 
 import { useAuthStore } from './store/useAuthStore.js';
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, setSocket, onlineUsers } = useAuthStore(); // Destructure setSocket and onlineUsers
   const location = useLocation();
+  const isProfilePage = location.pathname === '/profile';
 
   useEffect(() => {
     checkAuth();
@@ -75,7 +76,7 @@ const App = () => {
 
       {!shouldHideNavbar && <Navbar />}
 
-      <div className='flex-1 flex overflow-hidden'>
+      <div className={`flex-1 flex ${isProfilePage ? 'overflow-y-auto' : 'overflow-hidden'}`}>
         <Routes>
           <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
           <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />

@@ -1,13 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { Camera, Mail, User } from "lucide-react";
+import { useChatStore } from "../store/useChatStore.js";
+import { ArrowLeft, Camera, Mail, User } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-const ProfilePage = () => {
+export const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+  const { setSelectedUser } = useChatStore();
+  const navigate = useNavigate();
+
   const [selectedImg, setSelectedImg] = useState(null);
   const [newUsername, setNewUsername] = useState(authUser?.username || "");
   const [isEditingUsername, setIsEditingUsername] = useState(false);
+
+  const handleBack = () => {
+    setSelectedUser(null);
+    navigate('/');
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -58,14 +68,16 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-screen pt-20 bg-base-200">
-      <div className="max-w-2xl mx-auto p-4 py-8">
-        <div className="bg-base-100 rounded-xl p-6 space-y-8 shadow-lg">
+    <div className="w-full h-full flex justify-center bg-base-200 pt-20">
+        <div className="bg-base-100 rounded-xl p-6 space-y-8 shadow-lg w-full max-w-2xl h-fit mb-20">
           {/* Header */}
-          <div className="text-center">
+          <div className="flex items-center justify-center relative">
+            <button onClick={handleBack} className="btn btn-ghost btn-circle sm:hidden absolute left-0">
+                <ArrowLeft className="size-6" />
+            </button>
             <h1 className="text-2xl font-semibold">Profile</h1>
-            <p className="mt-2 text-base-content/60">Your profile information</p>
           </div>
+          <p className="mt-2 text-base-content/60 text-center">Your profile information</p>
 
           {/* Avatar Upload */}
           <div className="flex flex-col items-center gap-4">
@@ -169,9 +181,6 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };
-
-export default ProfilePage;
