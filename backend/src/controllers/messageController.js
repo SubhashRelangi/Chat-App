@@ -34,9 +34,27 @@ export const getUsersForSidebar = async (req, res) => {
     try {
         const loggedUserId = req.user._id;
 
-        const users = await User.find({ _id: { $ne: loggedUserId } }).select("-password");
+        const users = await User.find({ _id: { $ne: loggedUserId } }).select("-password").lean();
 
-        res.status(200).json(users);
+        const usersWithLastMessage = await Promise.all(
+            users.map(async (user) => {
+                const lastMessage = await Message.findOne({
+                    $or: [
+                        { senderId: loggedUserId, receiverId: user._id },
+                        { senderId: user._id, receiverId: loggedUserId },
+                    ],
+                })
+                .sort({ createdAt: -1 })
+                .lean();
+
+                return {
+                    ...user,
+                    lastMessage,
+                };
+            })
+        );
+
+        res.status(200).json(usersWithLastMessage);
     } catch (error) {
         console.error("Error in getAllUsers controller:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
