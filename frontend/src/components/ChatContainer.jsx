@@ -19,7 +19,6 @@ const ChatContainer = () => {
   const { authUser } = useAuthStore();
 
   const messageEndRef = useRef(null);
-  const lastMessageIdRef = useRef(null);
 
   // Fetch messages and subscribe to updates
   useEffect(() => {
@@ -33,11 +32,9 @@ const ChatContainer = () => {
 
   // Scroll to bottom on new message
   useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage && lastMessage._id !== lastMessageIdRef.current) {
-      lastMessageIdRef.current = lastMessage._id;
-      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    setTimeout(() => {
+      messageEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }, 0);
   }, [messages]);
 
   if (isMessagesLoading) {
