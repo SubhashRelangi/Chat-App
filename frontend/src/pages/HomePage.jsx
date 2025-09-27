@@ -8,7 +8,7 @@ const HomePage = () => {
   const {selectedUser} = useChatStore();
 
   return (
-    <div className="flex h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <div className="flex w-full bg-base-100 text-base-content">
 
       <Sidebar />
 

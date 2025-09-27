@@ -38,7 +38,7 @@ const Sidebar = () => {
             />
             <span className="text-sm">Show online only</span>
           </label>
-          <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
+          <span className="text-xs text-base-content/70">({onlineUsers.length - 1} online)</span>
         </div>
       </div>
 
@@ -61,8 +61,8 @@ const Sidebar = () => {
               />
               {onlineUsers.includes(user._id) && (
                 <span
-                  className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900"
+                  className="absolute bottom-0 right-0 size-3 bg-success 
+                  rounded-full ring-2 ring-base-content"
                 />
               )}
             </div>
@@ -70,7 +70,7 @@ const Sidebar = () => {
             {/* User info - only visible on larger screens */}
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.username}</div>
-              <div className="text-sm text-zinc-400">
+              <div className="text-sm text-base-content/70">
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
             </div>
@@ -78,7 +78,7 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-base-content/50 py-4">No online users</div>
         )}
       </div>
     </aside>

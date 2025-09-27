@@ -42,7 +42,7 @@ const ChatContainer = () => {
 
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex-1 flex flex-col">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -51,7 +51,7 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex-1 flex flex-col">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -79,7 +79,7 @@ const ChatContainer = () => {
               </time>
             </div>
 
-            <div className={`chat-bubble flex flex-col ${message.senderId === authUser._id ? "bg-primary text-white" : "bg-base-200 text-base-content"}`}>
+            <div className={`chat-bubble flex flex-col ${message.senderId === authUser._id ? "bg-primary text-primary-content" : "bg-base-200 text-base-content"}`}>
               {message.image && (
                 <img
                   src={message.image}

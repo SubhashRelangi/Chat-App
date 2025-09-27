@@ -56,7 +56,7 @@ const App = () => {
   console.log("Auth user:", authUser);
 
   return (
-    <div data-theme='cupcake' className='flex flex-col h-screen overflow-hidden'>
+    <div data-theme='cupcake' className='h-screen flex flex-col'>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -75,7 +75,7 @@ const App = () => {
 
       {!shouldHideNavbar && <Navbar />}
 
-      <div className='flex-1'>
+      <div className='flex-1 flex overflow-hidden'>
         <Routes>
           <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
           <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
